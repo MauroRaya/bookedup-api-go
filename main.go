@@ -12,6 +12,7 @@ func main() {
 	r := gin.Default()
 
 	r.GET("/usuarios", controllers.GetUsuarios)
+	r.GET("/usuarios/:id", controllers.GetUsuario)
 	r.POST("/usuarios", controllers.PostUsuario)
 	r.DELETE("/usuarios/:id", controllers.DeleteUsuario)
 

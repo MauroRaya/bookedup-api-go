@@ -20,6 +20,21 @@ func GetUsuarios(c *gin.Context) {
 	c.JSON(http.StatusOK, usuarios)
 }
 
+func GetUsuario(c *gin.Context) {
+	id := c.Param("id")
+
+	usuario, err := models.BuscarUsuario(id)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, usuario)
+}
+
 func PostUsuario(c *gin.Context) {
 	var novoUsuario models.Usuario
 

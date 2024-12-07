@@ -36,6 +36,21 @@ func BuscarUsuarios() ([]Usuario, error) {
 	return usuarios, nil
 }
 
+func BuscarUsuario(id string) (Usuario, error) {
+	var usuario Usuario
+
+	err := config.DB.QueryRow("SELECT * FROM Usuario WHERE id = ?", id).Scan(&usuario.ID, &usuario.Nome, &usuario.Email)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return Usuario{}, fmt.Errorf("user with ID %v not found", id)
+		}
+		return Usuario{}, err
+	}
+
+	return usuario, nil
+}
+
 func CriarUsuario(usuario Usuario) (int64, error) {
 	result, err := config.DB.Exec("INSERT INTO Usuario (Nome, Email) VALUES (?, ?)", usuario.Nome, usuario.Email)
 
