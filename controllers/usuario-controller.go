@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
+	"strconv"
 )
 
 func GetUsuarios(c *gin.Context) {
@@ -56,6 +58,31 @@ func PostUsuario(c *gin.Context) {
 	novoUsuario.ID = id
 
 	c.JSON(http.StatusCreated, novoUsuario)
+}
+
+func PatchUsuario(c *gin.Context) {
+	var novoUsuario models.Usuario
+
+	id := c.Param("id")
+
+	if err := c.BindJSON(&novoUsuario); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if err := models.EditarUsuario(novoUsuario, id); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	idInt, _ := strconv.ParseInt(id, 10, 64)
+	novoUsuario.ID = idInt
+
+	c.JSON(http.StatusOK, novoUsuario)
 }
 
 func DeleteUsuario(c *gin.Context) {

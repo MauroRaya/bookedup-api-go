@@ -43,7 +43,7 @@ func BuscarUsuario(id string) (Usuario, error) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return Usuario{}, fmt.Errorf("user with ID %v not found", id)
+			return Usuario{}, fmt.Errorf("user with ID %s not found", id)
 		}
 		return Usuario{}, err
 	}
@@ -67,6 +67,26 @@ func CriarUsuario(usuario Usuario) (int64, error) {
 	return id, nil
 }
 
+func EditarUsuario(novoUsuario Usuario, id string) error {
+	result, err := config.DB.Exec("UPDATE Usuario SET Nome=?, Email=? WHERE id = ?", novoUsuario.Nome, novoUsuario.Email, id)
+
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("unable to update user %s, id %s not found", novoUsuario.Nome, id)
+	}
+
+	return nil
+}
+
 func RemoverUsuario(id string) (Usuario, error) {
 	var usuario Usuario
 
@@ -74,7 +94,7 @@ func RemoverUsuario(id string) (Usuario, error) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return Usuario{}, fmt.Errorf("user with ID %v not found", id)
+			return Usuario{}, fmt.Errorf("user with ID %s not found", id)
 		}
 		return Usuario{}, err
 	}
